@@ -1,6 +1,8 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <vector>
+
 using namespace std;
 
 //Function Prototypes for menu.
@@ -9,6 +11,8 @@ void decisionHandler(int);
 //Function Prototypes for initilization
 void openFile(string);
 void createFile(string);
+void readFile();
+void getFileName();
 
 //Function Prototypes for file editing.
 void substitute(string, string);
@@ -25,33 +29,60 @@ void quit(void);
 //Global Variables
 int CurrentLine = 0;
 string CopiedString = "";
+string FileName = "";
+ifstream FileStream;
 
 int main()
 {
 	int choice = 0;
-	while(choice != 3)
+	cout << "Line Editor\n1)Open Existing\n2)Create New\n3)Exit\nEnter your choice: ";
+	cin >> choice;
+	while(choice > 3 || choice < 1)
 	{
-		cout << "Line Editor\n1)Open Existing\n2)Create New\n3)Exit\nEnter your choice: ";
+		cout << "invalid choice. try again.\nEnter your choice: ";
 		cin >> choice;
-		while(choice > 3 || choice < 1)
-		{
-			cout << "invalid choice. try again.\nEnter your choice: ";
-			cin >> choice;
-		}
-
-		decisionHandler(choice);
 	}
+
+	decisionHandler(choice);
+
 	return 0;
 }
 
+/* Sets the variable FileName to a user specified value. */
+void getFileName()
+{
+	string fileName = "";
+	cout << "Enter the file name: ";
+	cin >> fileName;
+	
+	FileName = fileName;
+}
 /* Creates a new file with a name specified by the user in the default directory. */
 void createFile(string fileName)
 {
+
 }
 
 /* Opens a file specified by the user. */
 void openFile(string fileName)
 {
+	FileStream.open(fileName);
+	if(!FileStream.is_open())
+		cout << "Failed to open the file, does it exist? (" << fileName << endl;
+	FileName = fileName;
+	readFile();
+}
+
+/* Reads the file data, stores all lines into an array. */
+void readFile()
+{
+	string line = "";
+	if(!FileStream.is_open())
+		cout << "The file stream is closed, no data to read." << endl;
+	while(getline(FileStream,line))
+	{
+		cout << line << endl;
+	}
 }
 
 /* Determines what operation to perform next, based upon user's input. */
@@ -61,6 +92,9 @@ void decisionHandler(int choice)
 	{
 		case 1:
 			cout << "Case 1." << endl; // This will open existing file.
+			getFileName();
+			openFile(FileName);
+			readFile();
 			break;
 		case 2:
 			cout << "Case 2." << endl; // This will create a new file.
