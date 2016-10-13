@@ -68,7 +68,7 @@ void openFile(string fileName)
 {
 	FileStream.open(fileName);
 	if(!FileStream.is_open())
-		cout << "Failed to open the file, does it exist? (" << fileName << endl;
+		cout << "Failed to open the file, does it exist? (" << fileName << ")" << endl;
 	FileName = fileName;
 	readFile();
 }
