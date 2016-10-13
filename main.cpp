@@ -3,7 +3,14 @@
 #include <string>
 using namespace std;
 
-//Function Prototypes
+//Function Prototypes for menu.
+void decisionHandler(int);
+
+//Function Prototypes for initilization
+void openFile(string);
+void createFile(string);
+
+//Function Prototypes for file editing.
 void substitute(string, string);
 void type(int);
 void copy(int);
@@ -21,7 +28,50 @@ string CopiedString = "";
 
 int main()
 {
+	int choice = 0;
+	while(choice != 3)
+	{
+		cout << "Line Editor\n1)Open Existing\n2)Create New\n3)Exit\nEnter your choice: ";
+		cin >> choice;
+		while(choice > 3 || choice < 1)
+		{
+			cout << "invalid choice. try again.\nEnter your choice: ";
+			cin >> choice;
+		}
+
+		decisionHandler(choice);
+	}
 	return 0;
+}
+
+/* Creates a new file with a name specified by the user in the default directory. */
+void createFile(string fileName)
+{
+}
+
+/* Opens a file specified by the user. */
+void openFile(string fileName)
+{
+}
+
+/* Determines what operation to perform next, based upon user's input. */
+void decisionHandler(int choice)
+{
+	switch(choice)
+	{
+		case 1:
+			cout << "Case 1." << endl; // This will open existing file.
+			break;
+		case 2:
+			cout << "Case 2." << endl; // This will create a new file.
+			break;
+		case 3:
+			cout << "Case 3." << endl; // This will exit.
+			break;
+		default:
+			cout << "Unexpected choice. (" << choice << ")." << endl; // This should never be executed but jst in case.
+			break;
+	}
 }
 
 /* Substitute newstring for every occurrence of oldstring in the current line. 
@@ -31,7 +81,7 @@ void substitute(string oldString, string newString)
 }
 
 /* Print the contents of the next # lines, including the current one.
- * Don’t print blank spaces at the end of a line. 
+ * Donï¿½t print blank spaces at the end of a line. 
  * The current line should be the last typed. */
 void type(int nextLines)
 {
@@ -52,7 +102,7 @@ void paste()
 
 /* Find the next occurrence of the string and make the line containing it the 
  * current line. If string does not occur anywhere in the file after the current line, 
- * issue a message and don’t change the current line. Then print the current line. */
+ * issue a message and donï¿½t change the current line. Then print the current line. */
 void locate(string searchString)
 {
 }
