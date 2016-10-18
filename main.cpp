@@ -2,6 +2,7 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include <cctype>
 
 using namespace std;
 
@@ -37,6 +38,11 @@ int main()
 	int choice = 0;
 	cout << "Line Editor\n1)Open Existing\n2)Create New\n3)Exit\nEnter your choice: ";
 	cin >> choice;
+	if(!isdigit(choice))
+	{
+		cout << "Invalid choice. Not a number. " << endl;
+		return -1;
+	}
 	while(choice > 3 || choice < 1)
 	{
 		cout << "invalid choice. try again.\nEnter your choice: ";
