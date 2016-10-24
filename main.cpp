@@ -32,6 +32,7 @@ int main()
 	while (true) 
 	{
 		system("CLS");
+		fileData.clear();
 		int choice = 0;
 		cout << "Line Editor\n1)Open Existing\n2)Create New\n3)Exit\nEnter your choice: ";
 		cin >> choice;
@@ -62,6 +63,11 @@ void openExisting()
 	else
 	{
 		cout << "File opened successfully!" << endl;
+		string line;
+		while (getline(fileIn, line))
+		{
+			fileData.push_back(line);
+		}
 		showOptions();
 	}
 }
@@ -71,11 +77,24 @@ void createNew()
 	cout << "Enter the name of the file to create: ";
 	string fileName;
 	getline(cin, fileName);
+	if (ifstream(fileName))
+	{
+		cout << "that file already exists." << endl;
+		return;
+	}
 	fileOut.open(fileName);
 	if (fileOut.is_open())
 	{
-		cout << "created " << fileName << " successfully.";
+		cout << "created " << fileName << " successfully." << endl;
 		fileOut.close();
+		fileIn.open(fileName);
+		if (!fileIn.is_open())
+		{
+			cout << "could not open the file.. " << fileName << endl;
+			return;
+		}
+
+		showOptions();
 	}
 	else
 	{
@@ -106,6 +125,7 @@ void showOptions()
 				break;
 			case 'q':
 				waiting = false;
+				fileIn.close();
 				break;
 			default:
 				cout << "Unknown command!" << endl;
