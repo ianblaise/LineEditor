@@ -18,11 +18,12 @@ void locate(string);
 void insert();
 void deleteLines(int);
 void replace(int);
-void moveCurrentLine(int);
+void moveCurrentLine();
 void quit(void);
 
 //Global Variables
 int currentLine = 0;
+string filesPath = "";
 ifstream fileIn;
 ofstream fileOut;
 vector<string> fileData;
@@ -33,20 +34,33 @@ int main()
 	{
 		system("CLS");
 		fileData.clear();
+		cin.clear();
 		int choice = 0;
 		cout << "Line Editor\n1)Open Existing\n2)Create New\n3)Exit\nEnter your choice: ";
-		cin >> choice;
-		cin.ignore();
-		while (choice > 3 || choice < 1)
+		if (cin >> choice && choice <= 3 && choice >= 1)
 		{
-			cout << "invalid choice. try again.\nEnter your choice: ";
-			cin >> choice;
+			cin.ignore();
+			decisionHandler(choice);	
+		}
+		else
+		{
+			cout << "error." << endl;
+			cin.clear();
 			cin.ignore();
 		}
-
-		decisionHandler(choice);
 	}
 	return 0;
+}
+
+void writeFile()
+{
+	fileIn.close();
+	fileOut.open(filesPath);
+	for (unsigned int i = 0; i < fileData.size(); i++)
+	{
+		fileOut << fileData[i] << "\n";
+	}
+	fileOut.close();
 }
 
 void openExisting()
@@ -68,6 +82,7 @@ void openExisting()
 		{
 			fileData.push_back(line);
 		}
+		filesPath = filePath;
 		showOptions();
 	}
 }
@@ -93,7 +108,7 @@ void createNew()
 			cout << "could not open the file.. " << fileName << endl;
 			return;
 		}
-
+		filesPath = fileName;
 		showOptions();
 	}
 	else
@@ -118,14 +133,14 @@ void showOptions()
 				insert();
 				break;
 			case 't':
-				type(1);
+				type(55);
 				break;
 			case 'm':
-				move(1);
+				moveCurrentLine();
 				break;
 			case 'q':
 				waiting = false;
-				fileIn.close();
+				writeFile();
 				break;
 			default:
 				cout << "Unknown command!" << endl;
@@ -166,7 +181,18 @@ void substitute(string oldString, string newString)
 * The current line should be the last typed. */
 void type(int nextLines)
 {
-	cout << "Type called!" << endl;
+	for (int i = currentLine; i < currentLine + nextLines; i++)
+	{
+		if (i < static_cast<int>(fileData.size()))
+		{
+			cout << fileData[i] << endl;
+		}
+		else
+		{
+			cout << "end of file." << endl;
+			break;
+		}
+	}
 }
 
 /* Copy the next # lines, including the current one, to a temporary storage area.
@@ -196,6 +222,15 @@ void locate(string searchString)
 * The current line should be the last line entered. */
 void insert()
 {
+	int numLines = 3;
+	for (int i = 0; i < numLines; i++)
+	{
+		string insertLine;
+		cout << "Insert a line: ";
+		cin >> insertLine;
+		fileData.insert(fileData.begin() + currentLine, insertLine);
+		currentLine++;
+	}
 	cout << "Insert called!" << endl;
 }
 
@@ -215,9 +250,13 @@ void replace(int nextLines)
 
 /* Locate & print the line # lines past the current line.
 * Make that the current line. */
-void moveCurrentLine(int line)
+void moveCurrentLine()
 {
-	cout << "Move called!" << endl;
+	cout << "What line number shall we move to?: ";
+	int lineNum;
+	cin >> lineNum;
+	currentLine = lineNum;
+	cout << "Changed current line to " << lineNum << endl;
 }
 
 /* Saves the file to disk and quits the editor. */
