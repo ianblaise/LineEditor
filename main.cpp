@@ -15,10 +15,10 @@ void type(int);
 void copy(int);
 void paste(void);
 void locate(string);
-void insert();
+void insert(int);
 void deleteLines(int);
 void replace(int);
-void moveCurrentLine();
+void moveCurrentLine(int);
 void quit(void);
 
 //Global Variables
@@ -69,18 +69,34 @@ void openExisting()
 	string filePath;
 	getline(cin, filePath);
 	fileIn.open(filePath);
+
 	if (!fileIn.is_open())
 	{
 		cout << "Failed to open the file! (" << filePath << ")" << endl;
+		cin.get();
 		return;
 	}
 	else
 	{
 		cout << "File opened successfully!" << endl;
 		string line;
+		cout << "Would you like to see the file's contents? (Y/N): ";
+		char ans;
+		bool displayContent = false;
+		cin >> ans;
+		if(isalpha(ans))
+		{
+			tolower(ans);
+			if(ans == 'y')
+				displayContent = true;
+		}
+
 		while (getline(fileIn, line))
 		{
+			if(displayContent)
+				cout << line << endl;
 			fileData.push_back(line);
+			currentLine++;
 		}
 		filesPath = filePath;
 		showOptions();
@@ -117,30 +133,43 @@ void createNew()
 	}
 }
 
+void getNumParam(int &numParam)
+{
+	cout << "Enter an integer: ";
+	cin >> numParam;
+}
+
 void showOptions()
 {
 	bool waiting = true;
 	while (waiting)
 	{
 		char cmd = ' ';
-		cout << "Enter a command (I <#>/T <#>/M <#>): ";
+		int numParam;
+		cout << "(CL: " << currentLine << ") Enter a command (I <#>/T <#>/M <#>): ";
 		cin >> cmd;
 		tolower(cmd);
 
 		switch (cmd)
 		{
 			case 'i':
-				insert();
+				getNumParam(numParam);
+				insert(numParam);
 				break;
 			case 't':
-				type(55);
+				getNumParam(numParam);
+				type(numParam);
 				break;
 			case 'm':
-				moveCurrentLine();
+				getNumParam(numParam);
+				moveCurrentLine(numParam);
 				break;
 			case 'q':
 				waiting = false;
 				writeFile();
+				break;
+			case 'c':
+				system("cls");
 				break;
 			default:
 				cout << "Unknown command!" << endl;
@@ -181,11 +210,13 @@ void substitute(string oldString, string newString)
 * The current line should be the last typed. */
 void type(int nextLines)
 {
+	int counter = 0;
 	for (int i = currentLine; i < currentLine + nextLines; i++)
 	{
 		if (i < static_cast<int>(fileData.size()))
 		{
 			cout << fileData[i] << endl;
+			counter++;
 		}
 		else
 		{
@@ -193,6 +224,7 @@ void type(int nextLines)
 			break;
 		}
 	}
+	currentLine += counter;
 }
 
 /* Copy the next # lines, including the current one, to a temporary storage area.
@@ -220,14 +252,16 @@ void locate(string searchString)
 
 /* Insert # lines into the file following the current line.
 * The current line should be the last line entered. */
-void insert()
+void insert(int numLines)
 {
-	int numLines = 3;
+	cin.clear();
+	cin.ignore();
+
 	for (int i = 0; i < numLines; i++)
 	{
 		string insertLine;
 		cout << "Insert a line: ";
-		cin >> insertLine;
+		getline(cin, insertLine);
 		fileData.insert(fileData.begin() + currentLine, insertLine);
 		currentLine++;
 	}
@@ -250,11 +284,8 @@ void replace(int nextLines)
 
 /* Locate & print the line # lines past the current line.
 * Make that the current line. */
-void moveCurrentLine()
+void moveCurrentLine(int lineNum)
 {
-	cout << "What line number shall we move to?: ";
-	int lineNum;
-	cin >> lineNum;
 	currentLine = lineNum;
 	cout << "Changed current line to " << lineNum << endl;
 }
