@@ -30,7 +30,7 @@ vector<string> fileData;
 
 int main()
 {
-	while (true) 
+	while (true)
 	{
 		system("CLS");
 		fileData.clear();
@@ -40,7 +40,7 @@ int main()
 		if (cin >> choice && choice <= 3 && choice >= 1)
 		{
 			cin.ignore();
-			decisionHandler(choice);	
+			decisionHandler(choice);
 		}
 		else
 		{
@@ -84,16 +84,16 @@ void openExisting()
 		char ans;
 		bool displayContent = false;
 		cin >> ans;
-		if(isalpha(ans))
+		if (isalpha(ans))
 		{
 			tolower(ans);
-			if(ans == 'y')
+			if (ans == 'y')
 				displayContent = true;
 		}
 
 		while (getline(fileIn, line))
 		{
-			if(displayContent)
+			if (displayContent)
 				cout << line << endl;
 			fileData.push_back(line);
 			currentLine++;
@@ -135,8 +135,25 @@ void createNew()
 
 void getNumParam(int &numParam)
 {
-	cout << "Enter an integer: ";
-	cin >> numParam;
+	cout << "Enter a #: ";
+	int num;
+	cin >> num;
+	if (num < 0)
+	{
+		cout << "Invalid num param. Num Param set to 0." << endl;
+		numParam = 0;
+	}
+	else
+	{
+		numParam = num;
+	}
+}
+
+void showHelp()
+{
+	cout << "Help Menu\n\nCommands: Move (m <#>) - This command changes the current line. Where # is the new current line.\n"
+		<< "\t\t Insert (i <#>) - This command prompts the user to input text into the file. # represents the number of new lines to insert.\n"
+		<< "\t\t Type (t <#>) - This command will display the next # of lines text to the user.\n";
 }
 
 void showOptions()
@@ -152,28 +169,32 @@ void showOptions()
 
 		switch (cmd)
 		{
-			case 'i':
-				getNumParam(numParam);
-				insert(numParam);
-				break;
-			case 't':
-				getNumParam(numParam);
-				type(numParam);
-				break;
-			case 'm':
-				getNumParam(numParam);
-				moveCurrentLine(numParam);
-				break;
-			case 'q':
-				waiting = false;
-				writeFile();
-				break;
-			case 'c':
-				system("cls");
-				break;
-			default:
-				cout << "Unknown command!" << endl;
-				break;
+		case 'i':
+			getNumParam(numParam);
+			insert(numParam);
+			break;
+		case 't':
+			getNumParam(numParam);
+			type(numParam);
+			break;
+		case 'm':
+			getNumParam(numParam);
+			moveCurrentLine(numParam);
+			break;
+		case 'q':
+			waiting = false;
+			currentLine = 0;
+			writeFile();
+			break;
+		case 'c':
+			system("cls");
+			break;
+		case '?':
+			showHelp();
+			break;
+		default:
+			cout << "Unknown command!" << endl;
+			break;
 		}
 	}
 }
@@ -183,21 +204,22 @@ void decisionHandler(int choice)
 {
 	switch (choice)
 	{
-		case 1:
-			openExisting(); //Opens existing file.. starts listening for cmd input.
-			break;
-		case 2:
-			createNew(); //Creates new file.. starts listening for cmd input.
-			break;
-		case 3:
-			quit();
-			break;
-		default:
-			cout << "Unexpected choice. (" << choice << ")." << endl; // This should never be executed but jst in case.
-			break;
+	case 1:
+		openExisting(); //Opens existing file.. starts listening for cmd input.
+		break;
+	case 2:
+		createNew(); //Creates new file.. starts listening for cmd input.
+		break;
+	case 3:
+		quit();
+		break;
+	default:
+		cout << "Unexpected choice. (" << choice << ")." << endl; // This should never be executed but jst in case.
+		break;
 	}
 }
 
+// Due 11/15
 /* Substitute newstring for every occurrence of oldstring in the current line.
 * Issue a message if oldstring does not appear in the current line. Print the changed line. */
 void substitute(string oldString, string newString)
@@ -242,6 +264,7 @@ void paste()
 	cout << "Paste called!" << endl;
 }
 
+// Due 11/15
 /* Find the next occurrence of the string and make the line containing it the
 * current line. If string does not occur anywhere in the file after the current line,
 * issue a message and don�t change the current line. Then print the current line. */
@@ -265,9 +288,9 @@ void insert(int numLines)
 		fileData.insert(fileData.begin() + currentLine, insertLine);
 		currentLine++;
 	}
-	cout << "Insert called!" << endl;
 }
 
+// Due 11/15
 /* Delete the next # lines, including the current one.
 * Make the first line follwoing the deleted section the current line. */
 void deleteLines(int nextLines)
@@ -275,6 +298,8 @@ void deleteLines(int nextLines)
 	cout << "Delete called!" << endl;
 }
 
+
+// Due 11/15
 /* Replace the next # lines, beginning with the current one, with # lines.
 * The current line should be the last line entered. */
 void replace(int nextLines)
