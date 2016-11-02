@@ -2,6 +2,7 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include <algorithm>
 
 using namespace std;
 
@@ -149,6 +150,17 @@ void getNumParam(int &numParam)
 	}
 }
 
+void getStrParam(string &strParam)
+{
+	cin.ignore();
+	cin.clear();
+
+	cout << "enter a string: ";
+	string str;
+	getline(cin, str);
+	strParam = str;
+}
+
 void showHelp()
 {
 	cout << "Help Menu\n\nCommands: Move (m <#>) - This command changes the current line. Where # is the new current line.\n"
@@ -163,6 +175,7 @@ void showOptions()
 	{
 		char cmd = ' ';
 		int numParam;
+		string strParam;
 		cout << "(CL: " << currentLine << ") Enter a command (I <#>/T <#>/M <#>): ";
 		cin >> cmd;
 		tolower(cmd);
@@ -181,10 +194,25 @@ void showOptions()
 			getNumParam(numParam);
 			moveCurrentLine(numParam);
 			break;
+		case 'l':
+			getStrParam(strParam);
+			locate(strParam);
+			break;
 		case 'q':
 			waiting = false;
 			currentLine = 0;
 			writeFile();
+			break;
+		case 's':
+			writeFile();
+			break;
+		case 'r':
+			getNumParam(numParam);
+			replace(numParam);
+			break;
+		case 'd':
+			getNumParam(numParam);
+			deleteLines(numParam);
 			break;
 		case 'c':
 			system("cls");
@@ -270,7 +298,17 @@ void paste()
 * issue a message and don�t change the current line. Then print the current line. */
 void locate(string searchString)
 {
-	cout << "Locate called!" << endl;
+	auto it = std::find(fileData.begin(), fileData.end(), searchString);
+	if (it == fileData.end())
+	{
+		cout << "Does not exist." << endl;
+	} 
+	else
+	{
+		auto index = distance(fileData.begin(), it);
+		cout << "Found string at index: " << index << endl;
+		currentLine = index;
+	}
 }
 
 /* Insert # lines into the file following the current line.
@@ -295,6 +333,21 @@ void insert(int numLines)
 * Make the first line follwoing the deleted section the current line. */
 void deleteLines(int nextLines)
 {
+	int counter = 0;
+	for (int i = currentLine; i < currentLine + nextLines; i++)
+	{
+		if (i < static_cast<int>(fileData.size()))
+		{
+			fileData.erase(fileData.begin() + currentLine + counter);
+			counter++;
+		}
+		else
+		{
+			cout << "End of file." << endl;
+			break;
+		}
+	}
+	currentLine += counter;
 	cout << "Delete called!" << endl;
 }
 
@@ -304,6 +357,28 @@ void deleteLines(int nextLines)
 * The current line should be the last line entered. */
 void replace(int nextLines)
 {
+	cin.ignore();
+	cin.clear();
+
+	int counter = 0;
+	for (int i = currentLine; i < currentLine + nextLines; i++)
+	{
+		if (i < static_cast<int>(fileData.size()))
+		{
+			string replacementLine;
+			fileData.erase(fileData.begin() + currentLine + counter);
+			cout << "Replace with: ";
+			getline(cin, replacementLine);
+			fileData.insert(fileData.begin() + currentLine + counter, replacementLine);
+			counter++;
+		}
+		else
+		{
+			cout << "End of file." << endl;
+			break;
+		}
+	}
+	currentLine += counter;
 	cout << "Replace called!" << endl;
 }
 
