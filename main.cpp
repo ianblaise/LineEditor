@@ -207,15 +207,18 @@ void showOptions()
 		case 'p':
 			paste();
 			break;
+		// locate
 		case 'l':
 			getStrParam(strParam);
 			locate(strParam);
 			break;
+		// quit
 		case 'q':
 			waiting = false;
 			currentLine = 0;
 			writeFile();
 			break;
+		// substitute
 		case 'x':
 			getStrParam(strParam);
 			getStrParam1(strParam1);
@@ -236,6 +239,7 @@ void showOptions()
 			getNumParam(numParam);
 			copy(numParam);
 			break;
+		// clears the console
 		case 'z':
 			system("cls");
 			break;
