@@ -162,6 +162,16 @@ void getStrParam(string &strParam)
 	strParam = str;
 }
 
+void getStrParam1(string &strParam)
+{
+	cin.clear();
+
+	cout << "enter a string: ";
+	string str;
+	getline(cin, str);
+	strParam = str;
+}
+
 void showHelp()
 {
 	cout << "Help Menu\n\nCommands: Move (m <#>) - This command changes the current line. Where # is the new current line.\n"
@@ -177,6 +187,7 @@ void showOptions()
 		char cmd = ' ';
 		int numParam;
 		string strParam;
+		string strParam1;
 		cout << "(CL: " << currentLine << ") Enter a command (I <#>/T <#>/M <#>): ";
 		cin >> cmd;
 		tolower(cmd);
@@ -206,6 +217,11 @@ void showOptions()
 			waiting = false;
 			currentLine = 0;
 			writeFile();
+			break;
+		case 'x':
+			getStrParam(strParam);
+			getStrParam1(strParam1);
+			substitute(strParam, strParam1);
 			break;
 		case 's':
 			writeFile();
@@ -260,7 +276,9 @@ void decisionHandler(int choice)
 * Issue a message if oldstring does not appear in the current line. Print the changed line. */
 void substitute(string oldString, string newString)
 {
-	cout << "Substitute called!" << endl;
+	locate(oldString);
+	fileData.erase(fileData.begin() + currentLine);	
+	fileData.insert(fileData.begin() + currentLine, newString);
 }
 
 /* Print the contents of the next # lines, including the current one.
@@ -420,7 +438,7 @@ void paste()
 	int counter = 0;
 	for(string val : copyData)
 	{
-		fileData.insert(fileData.begin() + counter, val);
+		fileData.insert(fileData.begin() + currentLine + counter, val);
 		counter++;
 	}
 	currentLine += counter;
