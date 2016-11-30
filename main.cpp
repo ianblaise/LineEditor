@@ -28,6 +28,7 @@ string filesPath = "";
 ifstream fileIn;
 ofstream fileOut;
 vector<string> fileData;
+vector<string> copyData;
 
 int main()
 {
@@ -194,6 +195,9 @@ void showOptions()
 			getNumParam(numParam);
 			moveCurrentLine(numParam);
 			break;
+		case 'p':
+			paste();
+			break;
 		case 'l':
 			getStrParam(strParam);
 			locate(strParam);
@@ -215,6 +219,10 @@ void showOptions()
 			deleteLines(numParam);
 			break;
 		case 'c':
+			getNumParam(numParam);
+			copy(numParam);
+			break;
+		case 'z':
 			system("cls");
 			break;
 		case '?':
@@ -277,21 +285,6 @@ void type(int nextLines)
 	currentLine += counter;
 }
 
-/* Copy the next # lines, including the current one, to a temporary storage area.
-* The current line should not change. */
-void copy(int nextLines)
-{
-	cout << "Copy called!" << endl;
-}
-
-/* Copy the contents of the temporary storage area to a position between the
-* current line and the line following the current line.
-* The current line should become the last line pasted. */
-void paste()
-{
-	cout << "Paste called!" << endl;
-}
-
 // Due 11/15
 /* Find the next occurrence of the string and make the line containing it the
 * current line. If string does not occur anywhere in the file after the current line,
@@ -351,7 +344,6 @@ void deleteLines(int nextLines)
 	cout << "Delete called!" << endl;
 }
 
-
 // Due 11/15
 /* Replace the next # lines, beginning with the current one, with # lines.
 * The current line should be the last line entered. */
@@ -394,4 +386,42 @@ void moveCurrentLine(int lineNum)
 void quit()
 {
 	exit(0);
+}
+
+/* Copy the next # lines, including the current one, to a temporary storage area.
+* The current line should not change. */
+void copy(int nextLines)
+{
+	int counter = 0;
+	for(int i = currentLine; i < currentLine + nextLines; i++)
+	{
+		if (i < static_cast<int>(fileData.size()))
+		{
+			copyData.insert(copyData.end(), fileData[i]);
+			counter++;
+		}
+		else
+		{
+			cout << "End of file" << endl;
+		}
+	}
+	for(int a = 0; a < static_cast<int>(copyData.size()); a++)
+	{
+		cout << "copy data: " << copyData[a] << endl;
+	}
+	cout << "copied " << nextLines << " lines." << endl;
+}
+
+/* Copy the contents of the temporary storage area to a position between the
+* current line and the line following the current line.
+* The current line should become the last line pasted. */
+void paste()
+{
+	int counter = 0;
+	for(string val : copyData)
+	{
+		fileData.insert(fileData.begin() + counter, val);
+		counter++;
+	}
+	currentLine += counter;
 }
