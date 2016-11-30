@@ -174,9 +174,7 @@ void getStrParam1(string &strParam)
 
 void showHelp()
 {
-	cout << "Help Menu\n\nCommands: Move (m <#>) - This command changes the current line. Where # is the new current line.\n"
-		<< "\t\t Insert (i <#>) - This command prompts the user to input text into the file. # represents the number of new lines to insert.\n"
-		<< "\t\t Type (t <#>) - This command will display the next # of lines text to the user.\n";
+	cout << "Insert: press 'i' and then enter a number of lines to insert" << endl;
 }
 
 void showOptions()
@@ -188,7 +186,7 @@ void showOptions()
 		int numParam;
 		string strParam;
 		string strParam1;
-		cout << "(CL: " << currentLine << ") Enter a command (I <#>/T <#>/M <#>): ";
+		cout << "(CL: " << currentLine << ") Enter a command (Enter '?' for list of commands): ";
 		cin >> cmd;
 		tolower(cmd);
 
@@ -347,9 +345,9 @@ void deleteLines(int nextLines)
 	int counter = 0;
 	for (int i = currentLine; i < currentLine + nextLines; i++)
 	{
-		if (i < static_cast<int>(fileData.size()))
+		if (i <= static_cast<int>(fileData.size()))
 		{
-			fileData.erase(fileData.begin() + currentLine + counter);
+			fileData.erase(fileData.begin() + currentLine);
 			counter++;
 		}
 		else
@@ -358,7 +356,7 @@ void deleteLines(int nextLines)
 			break;
 		}
 	}
-	currentLine += counter;
+	currentLine = 0;
 	cout << "Delete called!" << endl;
 }
 
